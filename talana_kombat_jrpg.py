@@ -206,35 +206,49 @@ def talana_kombat_JRPG(datos_de_pelea: Dict) -> None:
     print('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
     print(f'|||||||||||||||||||||||  {player1.NOMBRE} VS {player2.NOMBRE}  ||||||||||||||||||||||||||||||||')
     print('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
+    print(f'----> Inicia: {player1.NOMBRE}\n')
     indice = 0
     while duracion_del_combate > 0:
-        energia_a_quitar = player1.acciones_ejecutadas(player1.MOVIMIENTOS[indice], player1.GOLPES[indice])
-        energia_restante = player2.energia_restante(energia_a_quitar)
+        try:
+            energia_a_quitar = player1.acciones_ejecutadas(player1.MOVIMIENTOS[indice], player1.GOLPES[indice])
+            energia_restante = player2.energia_restante(energia_a_quitar)
 
-        if energia_restante <= 0:
-            print(f'*{player1.NOMBRE} gana la pelea y aun le queda {player1.ENERGIA} de energia*')
+            if energia_restante <= 0:
+                print(f'\n*{player1.NOMBRE} gana la pelea y aun le queda {player1.ENERGIA} de energia*')
+                break
+
+            energia_a_quitar = player2.acciones_ejecutadas(player2.MOVIMIENTOS[indice], player2.GOLPES[indice])
+            energia_restante = player1.energia_restante(energia_a_quitar)
+
+            if energia_restante <= 0:
+                print(f'\n*{player2.NOMBRE} gana la pelea y aun le queda {player2.ENERGIA} de energia*')
+                break
+            indice += 1
+            duracion_del_combate -= 1
+        except IndexError:
             break
 
-        energia_a_quitar = player2.acciones_ejecutadas(player2.MOVIMIENTOS[indice], player2.GOLPES[indice])
-        energia_restante = player1.energia_restante(energia_a_quitar)
+    if player1.ENERGIA == player2.ENERGIA:
+        print(f'\n*Player1 y Player2 no saben jugar pasen control*')
 
-        if energia_restante <= 0:
-            print(f'*{player2.NOMBRE} gana la pelea y aun le queda {player2.ENERGIA} de energia*')
-            break
-        indice += 1
-        duracion_del_combate -= 1
+    if player1.ENERGIA > player2.ENERGIA:
+        print(f'\n*{player1.NOMBRE} gana la pelea y aun le queda {player1.ENERGIA} de energia*')
+
+    if player1.ENERGIA < player2.ENERGIA:
+        print(f'\n*{player2.NOMBRE} gana la pelea y aun le queda {player2.ENERGIA} de energia*')
+    print('\n')
     print('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
 
 
 # ... Simulacion de json 
 KOMBAT = {
     "player1": {
-        "movimientos": ["D","DSD","S","DSD","SD"],
-        "golpes": ["K","P","","K","P"]
+        "movimientos": ["DSD", "S"],
+        "golpes": ["P", ""]
     },
     "player2": {
-        "movimientos": ["SA","SA","SA","ASA","SA"],
-        "golpes": ["K","","K","P","P"]
+        "movimientos": ["","ASA","DA","AAA", "", "SA"],
+        "golpes": ["P", "", "P", "K", "K", "K",]
     }
 }
 json_de_pelea_recibido = json.dumps(KOMBAT)
